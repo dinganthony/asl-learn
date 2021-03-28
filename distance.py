@@ -8,18 +8,33 @@ def compute_distances(landmarks):
     if not landmarks or num_landmarks <= 0:
         return []
     average = [0, 0, 0]
+    min_x = float('inf')
+    max_x = 0
+    min_y = float('inf')
+    max_y = 0
+    min_z = 0
+    max_z = float('-inf')
     for i in range(num_landmarks):
         average[0] = average[0] + landmarks.landmark[i].x
         average[1] = average[1] + landmarks.landmark[i].y
         average[2] = average[2] + landmarks.landmark[i].z
+        min_x = min(landmarks.landmark[i].x, min_x)
+        max_x = max(landmarks.landmark[i].x, max_x)
+        min_y = min(landmarks.landmark[i].y, min_y)
+        max_y = max(landmarks.landmark[i].y, max_y)
+        min_z = min(landmarks.landmark[i].z, min_z)
+        max_z = max(landmarks.landmark[i].z, max_z)
     average[0] = average[0] / num_landmarks
     average[1] = average[1] / num_landmarks
     average[2] = average[2] / num_landmarks
 
     landmark_list = []
+    assert min_x != max_x
+    assert min_y != max_y
+    assert min_z != max_z
     for i in range(num_landmarks):
         landmark = landmarks.landmark[i]
-        landmark_list.append([landmark.x - average[0], landmark.y - average[1], landmark.z - average[2]])
+        landmark_list.append([(landmark.x - average[0]) / (max_x - min_x), (landmark.y - average[1]) / (max_y - min_y), (landmark.z - average[2]) / (max_z - min_z)])
 
     distances = [[] for i in range(num_landmarks)]
     for i in range(num_landmarks):
