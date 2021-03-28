@@ -1,12 +1,10 @@
 import mediapipe as mp
 
 def distance(l1, l2):
-    return (l1[0] - l2[0]) * (l1[0] - l2[0]) +
-     (l1[1] - l2[1]) * (l1[1] - l2[1]) +
-      (l1[2] - l2[2]) * (l1[2] - l2[2])
+    return (l1[0] - l2[0]) * (l1[0] - l2[0]) + (l1[1] - l2[1]) * (l1[1] - l2[1]) + (l1[2] - l2[2]) * (l1[2] - l2[2])
 
 def compute_distances(landmarks):
-    num_landmarks = len(landmarks)
+    num_landmarks = 21
     if not landmarks or num_landmarks <= 0:
         return []
     average = [0, 0, 0]
@@ -36,6 +34,7 @@ def distance_diff(curr, test):
     for i in range(len(curr)):
         for j in range(len(curr[0])):
             diff += abs(curr[i][j] - test[i][j])
+    return diff
 
 def find_best_letter(current, answers):
     distances = compute_distances(current)
@@ -46,4 +45,4 @@ def find_best_letter(current, answers):
         if diff < min_diff:
             min_diff = diff
             best_ans = i
-    return 'A' + best_ans
+    return chr(best_ans + 65)

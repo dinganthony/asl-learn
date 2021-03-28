@@ -3,6 +3,8 @@ import mediapipe as mp
 import cv2
 import glob
 
+from distance import *
+
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
 file_list = glob.glob('./asl_figures/*.jpg')
@@ -13,6 +15,7 @@ with mp_hands.Hands(
     static_image_mode=True,
     max_num_hands=2,
     min_detection_confidence=0.5) as hands:
+  answers = []
   for idx, file in enumerate(file_list):
     # Read an image, flip it around y-axis for correct handedness output (see
     # above).
@@ -27,6 +30,7 @@ with mp_hands.Hands(
     image_height, image_width, _ = image.shape
     annotated_image = image.copy()
     for hand_landmarks in results.multi_hand_landmarks:
+      answers.append(hand_landmarks)
       print('hand_landmarks:', hand_landmarks)
       print(
             f'Index finger tip coordinates: (',
@@ -37,8 +41,6 @@ with mp_hands.Hands(
           annotated_image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
     cv2.imwrite(
         '/tmp/annotated_image' + str(idx) + '.png', cv2.flip(annotated_image, 1))
-
-'''
 
 # From Mediapipe Hands Example
 cap = cv2.VideoCapture(0)
@@ -65,6 +67,7 @@ with mp_hands.Hands(
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     if results.multi_hand_landmarks:
       for hand_landmarks in results.multi_hand_landmarks:
+        print(find_best_letter(hand_landmarks, answers))
         mp_drawing.draw_landmarks(
             image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
     cv2.imshow('MediaPipe Hands', image)
@@ -74,5 +77,3 @@ with mp_hands.Hands(
 
 
 cap.release()
-
-'''
